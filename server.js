@@ -87,6 +87,25 @@ let upvotes = [
 
 //APIS
 
+//Register a new USER
+app.post('/register', (req, res) => {
+    let details = req.body;
+    let username = details.username; 
+    let email = details.email;
+    let password = details.password;
+
+    let userexists = users.find(user => user.username === username);
+    let emailexists = users.find(user => user.email === email);
+
+    if (userexists || emailexists) {
+        res.send({ message: "username already exists or email already exists" });
+    } else {
+        users.push({ user_id: users.length + 1, username: username, email: email, password: password, created_at: new Date().toISOString() });
+        res.send({ message: "User registered successfully" }); 
+    }
+});
+
+
 // subscribe to subreddit
 app.post('/subscribe', (req, res) => {
     let subreddit_id = parseInt(req.body.subreddit_id, 10);
@@ -140,19 +159,9 @@ app.post('/posttosub', (req, res) => {
 
 
 
-///************** WORKING**********/
-app.get('/post', (req, res) => {
-    let post_id = parseInt(req.query.post_id, 10);
-    let post = posts.find(post => post.post_id === post_id);
-    if (post) {
-        res.send(post);
-    } else {
-        res.status(404).send({ message: 'Post Not Found' });
-    }
-});
 
 
-///************** WORKING**********/
+//COMMENT ON a POST
 app.post('/comment', (req, res) => {
     let post_id = parseInt(req.body.post_id, 10);
     let content = req.body.content;
@@ -176,7 +185,7 @@ app.post('/comment', (req, res) => {
 });
 
 
-///************** WORKING**********/
+
 //Upvote a Post
 app.post('/upvote', (req, res) => {
     let post_id = parseInt(req.body.post_id, 10);
